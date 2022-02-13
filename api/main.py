@@ -7,6 +7,7 @@ import json
 from io import StringIO
 from geojson import Feature, Point, FeatureCollection
 from dotenv import load_dotenv
+from mangum import Mangum
 
 load_dotenv()
 
@@ -123,3 +124,6 @@ async def post_file(input_file: UploadFile = File(...)):
         "message": f"{input_file.filename} converted to geojson and uploaded.",
         "data": geojson_feature_collection,
     }
+
+
+handler = Mangum(app)

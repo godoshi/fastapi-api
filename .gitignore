@@ -64,3 +64,6 @@ ENV/
 env.bak/
 venv.bak/
 
+# Manual Deployment
+api.zip
+

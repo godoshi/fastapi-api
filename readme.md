@@ -2,7 +2,7 @@
 
 python 3.9.10
 
-## Pre-Reading
+## Tools
 [pyenv](https://github.com/pyenv/pyenv)
 [python virtual environments](https://docs.python.org/3/library/venv.html)
 [python modules](https://docs.python.org/3/tutorial/modules.html)
@@ -11,6 +11,7 @@ python 3.9.10
 [fastapi](https://fastapi.tiangolo.com/)
 [uvicorn](https://www.uvicorn.org/)
 [python-multipart](https://andrew-d.github.io/python-multipart/])
+[magnum](https://pypi.org/project/mangum/)
 
 ## Project setup
 ```
@@ -28,6 +29,19 @@ pip install -r api/requirements.txt
 ```
 cd api
 uvicorn main:app --reload
+```
+
+### Adding pip Requirements
+```
+pip freeze > api/requirements.txt
+```
+
+## Deployment (manual)
+```
+source venv/bin/activate
+cd ./venv/lib/python3.9/site-packages
+zip -r9 ../../../../api.zip .
+cd ../../../../api && zip -g ../api.zip -r .
 ```
 
 ## TODO
