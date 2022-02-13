@@ -68,14 +68,14 @@ cd ../../../../api && zip -x .env -g ../api.zip -r .
 3. Update lambda source code
 
 ## TODO
+- containerize local dev environment
 - debgging and logging tools
 - review and organize code
 - define branching structure
+- authentication
 - automate infrastructure creation
 - automate deployments, CI/CD
-- authentication
 - testing automation and tooling
-- containerize local dev environment
 
 ## Helpful links
 - [pyenv](https://github.com/pyenv/pyenv)
