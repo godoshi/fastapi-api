@@ -25,6 +25,9 @@ cd api
 uvicorn main:app --reload
 ```
 
+## API docs
+API docs are available when running locally: http://127.0.0.1:8000/docs
+
 ## Infrastructure
 *Make sure you stay in the same region!*
 ### AWS S3
@@ -76,6 +79,7 @@ cd ../../../../api && zip -x .env -g ../api.zip -r .
 - automate infrastructure creation
 - automate deployments, CI/CD
 - testing automation and tooling
+- figure out how to deploy docs
 
 ## Helpful links
 - [pyenv](https://github.com/pyenv/pyenv)
