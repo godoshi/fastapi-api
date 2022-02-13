@@ -23,19 +23,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+api_env = os.getenv("API_ENV")
+if api_env == "local":
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    )
+else:
+    s3_client = boto3.client("s3")
 S3_BUCKET = os.getenv("S3_BUCKET")
-
-s3_client = boto3.client(
-    "s3",
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-)
 
 
 @app.get("/")
 def root():
+    print(os.getenv("AWS_ACCESS_KEY_ID"))
+    print(os.getenv("AWS_SECRET_ACCESS_KEY"))
+    print(os.getenv("S3_BUCKET"))
     return {"message": "You probably shouldn't be here..."}
 
 
@@ -45,6 +51,7 @@ def get_files():
         files = s3_client.list_objects(Bucket=S3_BUCKET, Prefix="geojson")
         return files.get("Contents", [])
     except Exception as e:
+        print(e)
         raise HTTPException(500, detail="error getting files from s3")
 
 
@@ -58,6 +65,7 @@ def get_file(key: str = None):
             "data": json.loads(s3_object_data),
         }
     except Exception as e:
+        print(e)
         raise HTTPException(500, detail=f"error getting {key} from s3")
 
 
@@ -98,6 +106,7 @@ async def post_file(input_file: UploadFile = File(...)):
                 )
                 geojson_features.append(feature)
             except Exception as e:
+                print(e)
                 # skip invalid features
                 continue
         if len(geojson_features) == 0:
@@ -118,6 +127,7 @@ async def post_file(input_file: UploadFile = File(...)):
         csv_file_key = f"csv/{input_file.filename}"
         s3_client.upload_fileobj(input_file.file, S3_BUCKET, csv_file_key)
     except Exception as e:
+        print(e)
         raise HTTPException(500, detail="error uploading file to s3")
     # TODO: include number of valid/invalid rows in response
     return {

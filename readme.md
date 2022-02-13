@@ -1,53 +1,88 @@
+
 # Requirements
 
 python 3.9.10
 
-## Tools
-[pyenv](https://github.com/pyenv/pyenv)
-[python virtual environments](https://docs.python.org/3/library/venv.html)
-[python modules](https://docs.python.org/3/tutorial/modules.html)
-[python csv](https://docs.python.org/3/library/csv.html)
-[geojson]()
-[fastapi](https://fastapi.tiangolo.com/)
-[uvicorn](https://www.uvicorn.org/)
-[python-multipart](https://andrew-d.github.io/python-multipart/])
-[magnum](https://pypi.org/project/mangum/)
-
 ## Project setup
+1. create virtual environment
 ```
-# create virtual environment
 python -m venv venv
-
-# activate virtual environment
+```
+2. activate virtual environment
+```
 source venv/bin/activate
-
-# install requirements
+```
+3. install requirements
+```
 pip install -r api/requirements.txt
 ```
+4. create `api/.env` using `api/.env.example`
 
-### Run FastAPI server with hot-reloads
+## Run locally
+1. start the api server
 ```
 cd api
 uvicorn main:app --reload
 ```
 
-### Adding pip Requirements
-```
-pip freeze > api/requirements.txt
-```
+## Infrastructure
+*Make sure you stay in the same region!*
+### AWS S3
+Used to store files uploaded via the API and the lambda deployment package.
+1. Create an S3 bucket
 
-## Deployment (manual)
+### AWS Lambda
+Serverless deployment of our API.
+1. Create new lambda function with Python 3.9 runtime
+2. Upload deployment package from S3 (see Deployment)
+3. Update lambda handler to `main.handler`
+4. Add S3_BUCKET environment variable to the lambda configuration
+
+### AWS API Gateway
+1. Create new public REST API.
+2. Create a new method for ANY action.
+	* Select the Lambda Function integration type
+	* Check "on" Use Lambda Proxy Integration
+	* Set Lambda Function to the Lambda function name
+	* Confirm that you are giving API Gateway permissions to invoke the Lambda function
+3. Create a resource
+	* Check "on" the option to Configure as proxy resource
+	* Select the Lambda Function integration type
+	* Set Lambda Function to the Lambda function name
+	* Confirm that you are giving API Gateway permissions to invoke the Lambda function
+4. Deploy API
+	* Create new stage
+
+
+## Deployment
+*It's a manual process right now*
+1. Zip up a deployment package for AWS Lambda.
 ```
 source venv/bin/activate
+rm -rf api.zip
 cd ./venv/lib/python3.9/site-packages
 zip -r9 ../../../../api.zip .
-cd ../../../../api && zip -g ../api.zip -r .
+cd ../../../../api && zip -x .env -g ../api.zip -r .
 ```
+2. Upload your zip file to your AWS S3 bucket.
+3. Update lambda source code
 
 ## TODO
-- Organize code
-- Authentication
-- Unit Testing
-- Contanierization
-- CI/CD
-- Postman Collection
+- debgging and logging tools
+- review and organize code
+- define branching structure
+- automate infrastructure creation
+- automate deployments, CI/CD
+- authentication
+- testing automation and tooling
+- containerize local dev environment
+
+## Helpful links
+- [pyenv](https://github.com/pyenv/pyenv)
+- [python virtual environments](https://docs.python.org/3/library/venv.html)
+- [python csv](https://docs.python.org/3/library/csv.html)
+- [geojson](https://pypi.org/project/geojson/)
+- [fastapi](https://fastapi.tiangolo.com/)
+- [uvicorn](https://www.uvicorn.org/)
+- [python-multipart](https://andrew-d.github.io/python-multipart/])
+- [magnum](https://pypi.org/project/mangum/)
